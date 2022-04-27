@@ -1,0 +1,12 @@
+create database sysUser;
+use sysUser;
+
+create table if not exists users(
+	username varchar(30) not null primary key,
+    password varchar(30) not null,
+    nickname varchar(30) not null,
+    account varchar(64)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+alter table userTable add is_admin tinyint(1)
