@@ -27,15 +27,18 @@ class UserController{
         const { username } = ctx.request.body
         //获取用户信息
         //在token的payload总没记录id,username,is_admin
+        console.log(username)
         try{
-            const {password, ...res} = await getUserInfo([username])
+            const {password,...res} = await getUserInfo({username})
             ctx.body ={
                 code : 0,
                 message : '用户登录成功',
                 result :{
                     token : jwt.sign(res , JWT_SECRET , {
                         expiresIn : '1d'
-                    })
+                    }),
+                    username : res.username,
+                    id : res.id
                 }
             }
         }catch(err){

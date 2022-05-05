@@ -18,12 +18,18 @@ class UserService{
 
     async getUserInfo({id ,username, password,is_admin}){
         
+        if(!(id||username||password||is_admin) ){
+            console.error("无参数/参数不匹配")
+            return
+        }
         const whereOpt = {}
 
         id && Object.assign(whereOpt, { id })
         username && Object.assign(whereOpt, { username })
         password && Object.assign(whereOpt, { password })
         is_admin && Object.assign(whereOpt, { is_admin })
+
+        
 
         const res = await User.findOne({
             attributes : ['id', 'username', 'password'],

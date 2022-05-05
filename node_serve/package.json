@@ -13,6 +13,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.0",
+    "ipfs-http-client": "^56.0.3",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
@@ -21,7 +22,8 @@
     "mysql2": "^2.3.3",
     "nodemailer": "^6.7.3",
     "randomstring": "^1.2.2",
-    "sequelize": "^6.19.0"
+    "sequelize": "^6.19.0",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

@@ -1,0 +1,24 @@
+抖音支付：https://jobs.bytedance.com/campus/position/7057778055578421511/detail?utm_device=pc&utm_keyword=20220005&utm_source=SEMbaidu
+智能写作：https://jobs.bytedance.com/campus/position/7070025195567139108/detail?utm_device=pc&utm_keyword=20220005&utm_source=SEMbaidu
+
+（已投）字节：web前端开发：https://jobs.bytedance.com/campus/position/6782808072386513166/detail?utm_device=pc&utm_keyword=20220005&utm_source=SEMbaidu
+
+（已投）腾讯：软件开发-前端方向：https://join.qq.com/post_detail.html?pid=2&id=106&tid=2
+
+前端：
+跨域
+promise asyns await axios
+react 虚拟DOM jsx 生命周期 项目初始化 diff
+css和H5 定位  div  盒模型 flex css3新特性 垂直居中
+js(ES6) 基础数据类型（number,string,null,undefined,boolean，ES6新增了symbol） 新特性 （箭头函数），this指向，继承
+MVVM
+闭包
+
+操作系统：
+ 进程和线程
+
+网络原理：
+IPV4 IPV6 http get  post
+
+数据结构：
+排序，算法
