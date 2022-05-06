@@ -3,6 +3,8 @@ import { Table, Input, Button, Space, Row, Col } from 'antd'
 import Highlighter from 'react-highlight-words'
 import { SearchOutlined } from '@ant-design/icons'
 import { useNavigate, Outlet } from "react-router-dom"
+import axios from "axios"
+import mime from "mime"
 
 
 const data = [
@@ -59,6 +61,33 @@ function Table_List () {
   const [searchedColumn, setSearchedColumn] = useState('')
   let searchInput = useRef(null)
   const navigate = useNavigate()
+
+
+  const downloadFile = async() => {
+    axios.post("http://localhost:8000/download",{
+      path: "QmaL8x8G4YJhUH3wgkkNh6dU4dFFNWRZE8ckcD3DZMvZ2S",
+    },{responseType:'blob'}).then((res) =>{
+      if(res.status === 200){
+        const filetype = mime.getExtension(res.data.type)
+        console.log(filetype) 
+        const content  = res.data
+        const blob = new Blob([content])
+        if('download' in document.createElement('a')){
+          //非IE
+          const a = document.createElement('a')
+          a.download = 'download file.'+ filetype;
+          a.style.display = 'none';
+          a.href = window.URL.createObjectURL(blob);
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(a.href);
+          document.body.removeChild(a);
+        }
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
 
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -163,10 +192,7 @@ function Table_List () {
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a onClick={() => {
-            console.log(text)
-            console.log(record)
-          }}>Download</a>
+          <a onClick={downloadFile}>Download</a>
           <a onClick={() => { navigate('/detials') }}>
             Details
           </a>

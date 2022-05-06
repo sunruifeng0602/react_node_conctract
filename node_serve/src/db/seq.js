@@ -7,13 +7,4 @@ const seq = new Sequelize(DATABASE,DBUSERNAME,DBPASSWORD,{
     dialect : 'mysql'
 })
 
-// seq
-//     .authenticate()
-//     .then(()=>{
-//         console.log('success')
-//     })
-//     .catch((error)=>{
-//         console.log('failed',error)
-//     })
-
 module.exports  = seq

@@ -1,11 +1,17 @@
 const path = require('path')
 const fs  = require('fs')
+const buffer = require('buffer')
 
 const { create , globSource }= require('ipfs-http-client')
+const send = require('koa-send')
+const mime = require('mime')
+
+const fileType = require('../model/filetype.model')
+
 const ipfs = create()
 
-const ReadFile = (path,encoding) =>new Promise(async (resolve,reject) =>{
-    fs.readFile(path,encoding,async (err,data) =>{
+const ReadFile = (path) =>new Promise(async (resolve,reject) =>{
+    fs.readFile(path, (err,data) =>{
         if(err){
             console.error(err)
             reject(err)
@@ -16,28 +22,28 @@ const ReadFile = (path,encoding) =>new Promise(async (resolve,reject) =>{
     })
 })
 
-const getFileFromIpfs = (pashHash) => {
+const WriteFile = (path,buffer,encoding) =>{
     return new Promise(async (resolve,reject) =>{
-        for await (const fileGet of ipfs.get(pashHash)) {
-            console.log(fileGet.path)
-            // const content = new BufferList()
-            // for await (const chunk of file.content) {
-            // content.append(chunk)
-            // }
-            // console.log(content.toString())
-            // resolve(content)
-        }
+        fs.writeFile(path,buffer,encoding ,(err)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(path)
+            }
+        })
     })
 }
 
 const uploadFile = async (ctx,next) =>{
 
     try{
-        const fileBuffer = await ReadFile(ctx.request.files.resource.filepath,'utf-8')
-        console.log(fileBuffer)
+        //console.log(ctx.request.files.resource.mimetype)
+        const fileBuffer = await ReadFile(ctx.request.files.resource.filepath)
         const file = await ipfs.add(fileBuffer)
-        //console.log(file.path)
-        //console.log(await getFileFromIpfs(file.cid))
+        const cid = file.path
+        const length = ctx.request.files.resource.originalFilename.split('.').length
+        const type = ctx.request.files.resource.originalFilename.split('.')[length-1]
+        await fileType.create({cid,type})
         ctx.body = file.path
     }catch(err){
         console.error(err)
@@ -47,10 +53,32 @@ const uploadFile = async (ctx,next) =>{
 }
 
 const downloadFile = async (ctx,next) => {
+    try{
+        //console.log(ctx.request.body.path)
+        const cid = ctx.request.body.path
+        const whereOpt = {}
+        cid && Object.assign(whereOpt, {cid})
+        const res = await fileType.findOne({
+            attributes : [ 'cid', 'type'],
+            where : whereOpt
+        })
+
+        const chunks = []
+        for await (const chunk of ipfs.cat(ctx.request.body.path)) {  
+            chunks.push(chunk)
+        }
+        file_path_name = __dirname + '/download' + '/' + ctx.request.body.path + '.'+ res.dataValues.type
+        const fileDownloadPath = await WriteFile(file_path_name,Buffer.concat(chunks),'utf8')
+        await send(ctx, '/src/'+ fileDownloadPath.split('\\')[fileDownloadPath.split('\\').length-1]);
+    }catch(err){
+        console.error(err)
+        return
+    }
 
     await next()
 } 
 
 module.exports = {
-    uploadFile
+    uploadFile,
+    downloadFile
 }
