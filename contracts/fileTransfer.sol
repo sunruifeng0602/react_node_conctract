@@ -100,6 +100,7 @@ contract fileTransfer{
         require(id < files.length);
         //获取图书,载入合约
         File storage file = files[id];
+        //uint storage id = id;
         return (file.owner,file.nameWriter,file.style,file.uploadAge,file.intro,file.cover,file.score,file.comment);
     }
 
