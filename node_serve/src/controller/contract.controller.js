@@ -1,4 +1,8 @@
-const {uploadFileToContract , downloadFileToContract} = require('../service/contract.service')
+const {
+    uploadFileToContract, 
+    downloadFileToContract,
+    getFileInfoFromContract
+} = require('../service/contract.service')
 
 class ContractController {
 
@@ -26,6 +30,29 @@ class ContractController {
         }
 
 
+    }
+
+    async getFileDetial(ctx,next){
+        try{
+            const id  = ctx.request.body.id
+            const res = await getFileInfoFromContract(id)
+            ctx.body = {
+                code : 0,
+                message : '获取文件详情成功'+ id,
+                result : ''
+            }
+        }catch(err){
+            console.error(err)
+        }
+
+    }
+
+    async getFilesList(ctx,next){
+        try{
+
+        }catch(err){
+            console.error(err)
+        }
     }
 }
 
