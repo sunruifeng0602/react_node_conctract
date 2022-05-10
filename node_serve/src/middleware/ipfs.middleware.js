@@ -62,7 +62,7 @@ const downloadFile = async (ctx,next) => {
             attributes : [ 'cid', 'type'],
             where : whereOpt
         })
-
+        
         const chunks = []
         for await (const chunk of ipfs.cat(ctx.request.body.path)) {  
             chunks.push(chunk)
