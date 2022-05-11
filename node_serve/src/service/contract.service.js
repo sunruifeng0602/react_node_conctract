@@ -7,7 +7,7 @@ class ContractService{
         try{
             const receipt = await fileContract.methods.publishFileInfo(nameWriter,style , date , intro , cover)
                             .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
-            //console.log(receipt.events.publishFileSuccess.returnValues)
+            console.log(receipt.events.publishFileSuccess.returnValues)
         }catch(err){
             console.error(err)
         }

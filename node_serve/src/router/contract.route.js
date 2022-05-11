@@ -1,5 +1,5 @@
 const Router = require('koa-router')
-const {uploadFile,downloadFile} = require('../middleware/ipfs.middleware')
+const {uploadFile,downloadFile ,getUploadRequest} = require('../middleware/ipfs.middleware')
 const {
     uploadFileContract,
     downloadFileContract,
@@ -8,7 +8,7 @@ const {
     evaluateFile,
     getComment,
     getDownloadFileList,
-    getUploadFileList
+    getUploadFileList,
 } = require('../controller/contract.controller')
 
 const router  = new Router()
@@ -28,5 +28,7 @@ router.post('/getcomment',getComment)
 router.post('/downloadlist',getDownloadFileList)
 
 router.post('/uploadlist',getUploadFileList)
+
+router.post('/uploadRequest',getUploadRequest)
 
 module.exports = router

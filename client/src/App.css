@@ -84,3 +84,6 @@
   border-radius: 10px;
 }
 /* antd layout css */
+.semi-upload input{
+  display: none !important
+}

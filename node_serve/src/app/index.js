@@ -14,15 +14,18 @@ const app = new Koa()
 
 app.use(cors())
 app.use(KoaBody({
-    multipart :true,
+    multipart: true,
     formidable :{
         uploadDir : path.join(__dirname,'../uploads'),
+        maxFieldsSize: 256 * 1024 * 1024,
+        maxFileSize: 512 * 1024 * 1024,
         keepExtensions : true,
     }
 }))
 app.use(userRouter.routes())
 app.use(emailRouter.routes())
 app.use(contractRouter.routes())
+app.use(contractRouter.allowedMethods())
 
 app.on('error',errHandler)
 

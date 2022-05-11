@@ -1,22 +1,51 @@
 import React, { useState } from "react"
 import {
   Form, Input, Select, Space,
-  DatePicker, Upload, Row, Col, Button
+  DatePicker, Row, Col, 
+  Button,message
 } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
+import { Upload } from '@douyinfe/semi-ui';
+import axios from "axios"
+import qs from "qs"
 
 const { Option } = Select
 const { TextArea } = Input
-const { Dragger } = Upload
 
 const selectValue = ["Computer", "Physics", "Chemistry", "Petroleum"]
 
 function Form_Upload () {
   const [componentSize, setComponentSize] = useState('default')
+  const [file,setFile] = useState(null)
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size)
   }
 
+  const onFinish = (values) =>{
+    //setFormData(values)
+    //console.log(values)
+    //console.log(qs.stringify(values))
+    axios.post('http://localhost:8000/upload',{...values,resource:file.result})
+      .then((res)=>{
+        console.log(res)
+          if(res.status === 200){
+            message.success('上传成功')
+          }
+      }).catch((err)=>{
+          message.info('上传失败，内部服务出错')
+          console.log(err)
+      })
+  }
+
+  //const uploadFile = () =>{
+    // {
+    //   fileName : values.fileName,
+    //   authorName : values.authorName,
+    //   selectStyle : values.selectStyle,
+    //   selectDate : values.selectDate,
+    //   resourceDescription : values.resourceDescription
+    // }
+  //}
   return (
     <Row align="middle">
       <Col span={12} offset={6}>
@@ -27,6 +56,7 @@ function Form_Upload () {
           initialValues={{ size: componentSize, }}
           onValuesChange={onFormLayoutChange}
           size={componentSize}
+          onFinish={onFinish}
         >
           <Form.Item name="fileName" label="File Name">
             <Input size="middle" placeholder="Please enter a file name" />
@@ -52,23 +82,27 @@ function Form_Upload () {
             <TextArea showCount style={{ height: 120 }} maxLength={100} />
           </Form.Item>
           <Form.Item name="resourceSelect" label="Select">
-            <Dragger>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                band files
-              </p>
-            </Dragger>
+            <div>
+             <Upload
+                action="http://localhost:8000/uploadRequest"
+                draggable={true}
+                dragMainText={'点击上传文件或拖拽文件到这里'}
+                dragSubText="支持任意类型文件"
+                onSuccess={(files)=>{
+                  console.log(file)
+                  setFile(files)
+                }}
+              ></Upload>
+              
+            </div>
           </Form.Item>
-          <Form.Item name="resourceUpload" label="Upload">
-            <Button type="primary" htmlType="submit">
+          <Form.Item name="resourceUpload"  >
+            <Button type="primary" htmlType="submit" >
               Upload
             </Button>
           </Form.Item>
         </Form>
+        
       </Col>
     </Row>
   )

@@ -41,7 +41,7 @@ function App () {
       }
     }
     getWbe3State()
-  }, [web3])
+  }, [])
 
   // console.log(web3)
   // console.log(accounts)

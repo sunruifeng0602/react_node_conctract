@@ -34,15 +34,30 @@ const WriteFile = (path,buffer,encoding) =>{
     })
 }
 
+const getUploadRequest = async(ctx,next) =>{
+    try{
+        //console.log(ctx.request.files[Object.keys(ctx.request.files)[0]])
+        ctx.body = {
+            code : 0,
+            message : "上传成功",
+            result : ctx.request.files[Object.keys(ctx.request.files)[0]]
+        }
+    }catch(err){
+        console.error(err)
+    }
+
+}
+
 const uploadFile = async (ctx,next) =>{
 
+    //console.log(ctx.request.body)
     try{
-        //console.log(ctx.request.files.resource.mimetype)
-        const fileBuffer = await ReadFile(ctx.request.files.resource.filepath)
+        //console.log(ctx.request.body)
+        const fileBuffer = await ReadFile(ctx.request.body.resource.filepath)
         const file = await ipfs.add(fileBuffer)
         const cid = file.path
-        const length = ctx.request.files.resource.originalFilename.split('.').length
-        const type = ctx.request.files.resource.originalFilename.split('.')[length-1]
+        const length = ctx.request.body.resource.originalFilename.split('.').length
+        const type = ctx.request.body.resource.originalFilename.split('.')[length-1]
         await fileType.create({cid,type})
         ctx.body = file.path
     }catch(err){
@@ -80,5 +95,6 @@ const downloadFile = async (ctx,next) => {
 
 module.exports = {
     uploadFile,
-    downloadFile
+    downloadFile,
+    getUploadRequest
 }

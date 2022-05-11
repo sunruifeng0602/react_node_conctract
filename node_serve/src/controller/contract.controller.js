@@ -15,8 +15,9 @@ class ContractController {
 
     async uploadFileContract(ctx,next) {
         try{
-            const {fileName,authorName,selectStyle,selectDate,resourceDescription} = ctx.request.body
+            const {fileName,authorName,selectStyle,resourceDescription} = ctx.request.body
             const fileHash = ctx.body
+            //console.log(fileHash)
             const res = await uploadFileToContract(authorName,selectStyle,0,resourceDescription,fileHash)
             ctx.body = {
                 code : 0 ,

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef ,useEffect} from "react"
 import { Table, Input, Button, Space, Row, Col } from 'antd'
 import Highlighter from 'react-highlight-words'
 import { SearchOutlined } from '@ant-design/icons'
@@ -7,65 +7,48 @@ import axios from "axios"
 import mime from "mime"
 
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Joe Black',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Jim Green',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-  },
-  {
-    key: '5',
-    name: 'Jim Red3',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-  }, {
-    key: '6',
-    name: 'Jim Red3',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-  }, {
-    key: '7',
-    name: 'Jim Red3',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-  },
-  {
-    key: '8',
-    name: 'Jim Red3',
-    age: 32,
-    address: 'London No. 2 Lake Park',
-  },
-]
-
 function Table_List () {
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
+  const [data,setData] = useState([])
+  const [recordlist ,setRecord] = useState(null)
   let searchInput = useRef(null)
   const navigate = useNavigate()
 
+  useEffect(() =>{
+    const getList = async ()=>{
+      //console.log('1')
+      axios.post('http://localhost:8000/filelist')
+          .then((res) =>{
+            //console.log(res)
+            if(res.status === 200){
+              let list = []
+              for(let i = 0;i < res.data.result.length ; i++){
+                let listObj = {
+                  key : i,
+                  id : res.data.result.list[i].id ,
+                  hash : res.data.result.list[i].cover,
+                  author : res.data.result.list[i].nameWriter,
+                  style : res.data.result.list[i].style,
+                  infor: res.data.result.list[i].intro
+                }
+                list.push(listObj)
+              }
+              setData(list)
+            }
+          })
+          .catch((err)=>{
+            console.log(err)
+          })
+    }
+    getList()
+  },[])
 
   const downloadFile = async() => {
+    //console.log(recordlist)
     axios.post("http://localhost:8000/download",{
-      path: "QmaL8x8G4YJhUH3wgkkNh6dU4dFFNWRZE8ckcD3DZMvZ2S",
+      path: recordlist.hash,
+      id : recordlist.id
     },{responseType:'blob'}).then((res) =>{
       if(res.status === 200){
         const filetype = mime.getExtension(res.data.type)
@@ -166,26 +149,38 @@ function Table_List () {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      ...getColumnSearchProps('id'),
+    },
+    {
+      title: 'File Hash',
+      dataIndex: 'hash',
+      key: 'hash',
       width: '30%',
-      ...getColumnSearchProps('name'),
+      ...getColumnSearchProps('hash'),
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-      width: '20%',
-      ...getColumnSearchProps('age'),
+      title: 'Author',
+      dataIndex: 'author',
+      key: 'author',
+      width: '10%',
+      ...getColumnSearchProps('author'),
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      ...getColumnSearchProps('address'),
+      title: 'Style',
+      dataIndex: 'style',
+      key: 'style',
+      ...getColumnSearchProps('style'),
       sorter: (a, b) => a.address.length - b.address.length,
       sortDirections: ['descend', 'ascend'],
+    },
+    {
+      title: 'Information' ,
+      dataIndex: 'infor',
+      key: 'infor',
+      ...getColumnSearchProps('infor'),
     },
     {
       title: 'Action',
@@ -204,7 +199,13 @@ function Table_List () {
     <>
       <Row>
         <Col span={24} pull={0} push={0}>
-          <Table columns={columns} dataSource={data} />
+          <Table columns={columns} dataSource={data} onRow = {(record) => {
+            return {
+              onMouseEnter : event => {
+                setRecord(record)
+              }
+            }
+          }}/>
         </Col>
       </Row>
     </>
