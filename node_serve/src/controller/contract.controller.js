@@ -123,7 +123,7 @@ class ContractController {
                 ctx.body = {
                     code : 0,
                     message : "获取文件评论成功",
-                    resule : {
+                    result : {
                         commentList : commentList ,
 
                     }
@@ -139,7 +139,7 @@ class ContractController {
         try{
             const downloadFileList = await getDownloadFileFromContract()
             const downloadFileInfor = []
-            console.log(downloadFileList.downloadFilesID)
+            //console.log(downloadFileList.downloadFilesID)
             for(let i  = 0 ; i < downloadFileList.downloadFilesID.length ; i++){
                 //console.log(downloadFileList.downloadFilesID[i])
                 downloadFileInfor.push(await getFileInfoFromContract(downloadFileList.downloadFilesID[i]))

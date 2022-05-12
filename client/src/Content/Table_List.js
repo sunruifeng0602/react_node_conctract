@@ -17,7 +17,6 @@ function Table_List () {
 
   useEffect(() =>{
     const getList = async ()=>{
-      //console.log('1')
       axios.post('http://localhost:8000/filelist')
           .then((res) =>{
             //console.log(res)
@@ -188,7 +187,7 @@ function Table_List () {
       render: (text, record) => (
         <Space size="middle">
           <a onClick={downloadFile}>Download</a>
-          <a onClick={() => { navigate('/detials') }}>
+          <a onClick={() => { navigate('/detials?id='+recordlist.id + '&&hash=' + recordlist.hash) }}>
             Details
           </a>
         </Space>

@@ -22,9 +22,6 @@ function Form_Upload () {
   }
 
   const onFinish = (values) =>{
-    //setFormData(values)
-    //console.log(values)
-    //console.log(qs.stringify(values))
     axios.post('http://localhost:8000/upload',{...values,resource:file.result})
       .then((res)=>{
         console.log(res)

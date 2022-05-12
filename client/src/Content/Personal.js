@@ -1,9 +1,10 @@
-import React from "react"
+import React ,{ useState , useEffect }from "react"
 import {
   Avatar, Row, Col, Divider,
-  Descriptions, Table, Button
+  Descriptions, Table, Button, message
 } from 'antd'
 import { UserOutlined, UserDeleteOutlined } from '@ant-design/icons'
+import axios from "axios"
 
 const personalData = {
   name: "Li Si",
@@ -17,40 +18,91 @@ const personalData = {
 
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id'
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
+    title: 'File Hash',
+    dataIndex: 'hash',
+    key: 'hash'
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
+    title: 'Author',
+    dataIndex: 'author',
+    key: 'author'
   },
+  {
+    title: 'Style',
+    dataIndex: 'style',
+    key: 'style'
+  },
+  {
+    title: 'Information' ,
+    dataIndex: 'infor',
+    key: 'infor'
+  }
 ]
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  },
-]
-
 function Personal () {
+  const [ uploadData , setUploadData ] = useState([])
+  const [ downloadData , setDownloadData ] = useState([])
+
+  const getUploadData = async () => {
+    axios.post('http://localhost:8000/uploadlist')
+      .then((res) => {
+        console.log(res)
+        if(res.status === 200){
+          //message.success('获取成功')
+          let list = []
+          for(let i = 0 ; i < res.data.result.length ; i++){
+            let listObj = {
+              key : i ,
+              id : res.data.result[i].id ,
+              hash : res.data.result[i].cover,
+              author : res.data.result[i].nameWriter,
+              style : res.data.result[i].style,
+              infor: res.data.result[i].intro
+            }
+            list.push(listObj)
+          }
+          setUploadData(list)
+        }
+      }).catch((err) => {
+        message.info('获取失败')
+        console.log(err)
+      })
+  }
+
+  const getDownloadData = async () => {
+    axios.post('http://localhost:8000/downloadlist')
+      .then((res) => {
+        console.log(res)
+        if(res.status === 200){
+          //message.success('获取成功')
+          let list = []
+          for(let i = 0 ; i < res.data.result.length ; i++){
+            let listObj = {
+              key : i ,
+              id : res.data.result[i].id ,
+              hash : res.data.result[i].cover,
+              author : res.data.result[i].nameWriter,
+              style : res.data.result[i].style,
+              nfor: res.data.result[i].intro
+            }
+            list.push(listObj)
+          }
+          setDownloadData(list)
+        }
+      }).catch((err) => {
+        message.info('获取失败')
+        console.log(err)
+      })
+  }
+
+  useEffect(()=>{
+    getUploadData()
+    getDownloadData()
+  },[])
 
   return (
     <Row>
@@ -70,9 +122,9 @@ function Personal () {
           <Descriptions.Item label="university">{personalData.university}</Descriptions.Item>
         </Descriptions>
         <Divider>Upload Record</Divider>
-        <Table columns={columns} dataSource={data} size="middle" />
+        <Table columns={columns} dataSource={uploadData} size="middle" />
         <Divider>Download Record</Divider>
-        <Table columns={columns} dataSource={data} size="middle" />
+        <Table columns={columns} dataSource={downloadData} size="middle" />
       </Col>
     </Row>
   )

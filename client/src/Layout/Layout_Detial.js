@@ -2,21 +2,76 @@ import {
   Layout, Breadcrumb, Image, Row, Col, Avatar, Rate, Badge,
   Descriptions, Divider, Form, Input, Button, List, Comment
 } from 'antd'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState ,useEffect} from 'react'
 import moment from 'moment'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate ,useSearchParams} from 'react-router-dom'
+import axios from 'axios'
+
+import getWeb3 from '../getWeb3'
 
 const { Content, Footer } = Layout
 const { TextArea } = Input
 
 function Layout_Detial () {
 
+  const fileInfoOr = {
+    id : 0,
+    nameWriter : '',
+    downloadNum : '',
+    comment : '',
+    hash : '',
+    infro : ''
+  } 
+
   const [comments, setComments] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const [value, setValue] = useState('')
+  const [fileInfo ,setFileInfo] = useState(fileInfoOr)
   const navigate = useNavigate()
+  const [params] = useSearchParams()
+
+  const fileId = params.get('id')
+  const fileHash = params.get('hash')
+  const filePage = (fileId/10)+1
+
+  const getCommentList = async () => {
+    const res = await axios.post('http://localhost:8000/getcomment',{id : fileId})
+    if(res.status === 200){
+      //console.log(res)
+      //setComments(res.data.result.commentList)
+      //console.log(parseInt(res.data.result.commentList[0].date))
+      const list = []
+      for(let i = 0 ; i <  res.data.result.commentList.length ; i++){
+        const obj = {
+          author : res.data.result.commentList[i].commentator,
+          content : <p>{res.data.result.commentList[i].content}</p>,
+          datetime : moment(
+            parseInt(res.data.result.commentList[i].date)+Date.parse("8/5/2022")
+            ).fromNow(),
+          avatar: 'https://joeschmoe.io/api/v1/random',
+        }
+        list.push(obj)
+      }
+      setComments(list)
+    }
+  }
+
+  useEffect(() => {
+    const getFileDetial = async () =>{
+      const res = await axios.post('http://localhost:8000/detial',{id : fileId})
+      //console.log(res.data.result)
+      if(res.status === 200){
+        setFileInfo(res.data.result)
+        console.log(fileInfo)
+      }
+    }
+    getFileDetial()
+    getCommentList()
+  },[])
+
 
   const CommentList = ({ comments }) => {
+    console.log(comments)
     return (
       <List
         dataSource={comments}
@@ -28,6 +83,8 @@ function Layout_Detial () {
   }
 
   const handleSubmit = () => {
+
+
     if (!value) {
       return
     }
@@ -40,7 +97,6 @@ function Layout_Detial () {
         ...comments,
         {
           author: 'Han Solo',
-          avatar: 'https://joeschmoe.io/api/v1/random',
           content: <p>{value}</p>,
           datetime: moment().fromNow(),
         }
@@ -63,9 +119,9 @@ function Layout_Detial () {
             style={{
               margin: '30px 0',
             }}>
-            <Breadcrumb.Item>page</Breadcrumb.Item>
-            <Breadcrumb.Item>id</Breadcrumb.Item>
-            <Breadcrumb.Item>hash</Breadcrumb.Item>
+            <Breadcrumb.Item>Pagr:{filePage}</Breadcrumb.Item>
+            <Breadcrumb.Item>Id:{fileId}</Breadcrumb.Item>
+            <Breadcrumb.Item>{fileHash}</Breadcrumb.Item>
             <Breadcrumb.Item>
               <Button type='primary' onClick={() => { navigate("/") }}>BACK</Button>
             </Breadcrumb.Item>
@@ -80,13 +136,18 @@ function Layout_Detial () {
               <Col span={12} offset={6}>
                 <Descriptions bordered >
                   {/* <Descriptions.Item label="Image"></Descriptions.Item> */}
-                  <Descriptions.Item label="UserName" span={1}>Zhou Maomao</Descriptions.Item>
-                  <Descriptions.Item label="Telephone" span={2}>1810000000</Descriptions.Item>
-                  <Descriptions.Item label="Live" span={1}>Hangzhou, Zhejiang</Descriptions.Item>
-                  <Descriptions.Item label="Remark" span={2}>empty</Descriptions.Item>
-                  <Descriptions.Item label="Address" span={3}>
+                  <Descriptions.Item label="File ID" span={1}>{fileInfo.id}</Descriptions.Item>
+                  <Descriptions.Item label="Author Name" span={2}>{fileInfo.nameWriter}</Descriptions.Item>
+                  <Descriptions.Item label="Download Number" span={1}>{fileInfo.downloadNum}</Descriptions.Item>
+                  <Descriptions.Item label="Comment Number" span={2}>{fileInfo.comment}</Descriptions.Item>
+                  <Descriptions.Item label=" File Hash" span={3}>
                     <Badge>
-                      No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
+                      {fileInfo.hash}
+                    </Badge>
+                  </Descriptions.Item>
+                  <Descriptions.Item label=" File Information" span={3}>
+                    <Badge>
+                      {fileInfo.infro}
                     </Badge>
                   </Descriptions.Item>
                   <Descriptions.Item label="Rate">
@@ -101,7 +162,7 @@ function Layout_Detial () {
               </Col>
               <Col span={12} offset={6}>
                 <Comment
-                  avatar={<Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />}
+                  // avatar={<Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />}
                   content={
                     <>
                       <Form.Item>
