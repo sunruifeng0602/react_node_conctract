@@ -6,8 +6,14 @@ import { useNavigate, Outlet } from "react-router-dom"
 import axios from "axios"
 import mime from "mime"
 
+import fileTransferContract from "../contracts/fileTransfer.json"
+import getWeb3 from '../getWeb3'
+
 
 function Table_List () {
+  const [web3, setWeb3] = useState(undefined)
+  const [accounts, setAccounts] = useState([])
+  const [contract, setContract] = useState({})
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const [data,setData] = useState([])
@@ -15,39 +21,65 @@ function Table_List () {
   let searchInput = useRef(null)
   const navigate = useNavigate()
 
-  useEffect(() =>{
-    const getList = async ()=>{
-      axios.post('http://localhost:8000/filelist')
-          .then((res) =>{
-            //console.log(res)
-            if(res.status === 200){
-              let list = []
-              for(let i = 0;i < res.data.result.length ; i++){
-                let listObj = {
-                  key : i,
-                  id : res.data.result.list[i].id ,
-                  hash : res.data.result.list[i].cover,
-                  author : res.data.result.list[i].nameWriter,
-                  style : res.data.result.list[i].style,
-                  infor: res.data.result.list[i].intro
-                }
-                list.push(listObj)
+  const getList = async ()=>{
+    axios.post('http://localhost:8000/filelist')
+        .then((res) =>{
+          //console.log(res)
+          if(res.status === 200){
+            let list = []
+            for(let i = 0;i < res.data.result.length ; i++){
+              let listObj = {
+                key : i,
+                id : res.data.result.list[i].id ,
+                hash : res.data.result.list[i].cover,
+                author : res.data.result.list[i].nameWriter,
+                style : res.data.result.list[i].style,
+                infor: res.data.result.list[i].intro
               }
-              setData(list)
+              list.push(listObj)
             }
-          })
-          .catch((err)=>{
-            console.log(err)
-          })
+            setData(list)
+          }
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
+  }
+
+  useEffect(() =>{
+    async function getWbe3State () {
+      try {
+        // Get network provider and web3 instance.
+        const web3 = await getWeb3();
+        // Use web3 to get the user's accounts.
+        const accounts = await web3.eth.getAccounts();
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const depployedNetwork = fileTransferContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          fileTransferContract.abi,
+          depployedNetwork && depployedNetwork.address,
+        );
+        setWeb3(web3)
+        setAccounts(accounts)
+        setContract(instance)
+      } catch (error) {
+        alert('Failed to load web3, accounts, or contract. Check console for details.')
+        console.log(error)
+      }
     }
+    getWbe3State()
     getList()
   },[])
+  
+  console.log(accounts)
 
   const downloadFile = async() => {
     //console.log(recordlist)
     axios.post("http://localhost:8000/download",{
       path: recordlist.hash,
-      id : recordlist.id
+      id : recordlist.id,
+      account : accounts[0]
     },{responseType:'blob'}).then((res) =>{
       if(res.status === 200){
         const filetype = mime.getExtension(res.data.type)

@@ -37,7 +37,7 @@ function Login () {
 
   useEffect(() => {
     if(login){
-      navigate('/')
+      navigate('/list')
     }
   },[login])
 

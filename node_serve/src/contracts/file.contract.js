@@ -13,7 +13,6 @@ web3.eth.defaultAccount = web3.eth.accounts[0];
 //MyBlockChain M5D8
 //0xB1943c3dC6418b5Fec8F3Bd3CA97326E214b76b3
 const fileContract = new web3.eth.Contract(abi,'0xB1943c3dC6418b5Fec8F3Bd3CA97326E214b76b3',{
-    from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',
     gasPrice: '20000000000',
 })
 

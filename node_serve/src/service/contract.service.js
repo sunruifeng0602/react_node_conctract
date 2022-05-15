@@ -3,20 +3,20 @@ const fileContract = require('../contracts/file.contract')
 
 
 class ContractService{
-    async uploadFileToContract ( nameWriter,style , date , intro , cover ) {
+    async uploadFileToContract ( nameWriter,style , date , intro , cover ,account) {
         try{
             const receipt = await fileContract.methods.publishFileInfo(nameWriter,style , date , intro , cover)
-                            .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
-            console.log(receipt.events.publishFileSuccess.returnValues)
+                            .send({from : account ,gas : 6000000})
+            //console.log(receipt.events.publishFileSuccess.returnValues)
         }catch(err){
             console.error(err)
         }
     }
 
-    async downloadFileToContract(id){
+    async downloadFileToContract(id,account){
         try{
             const receipt = await fileContract.methods.downloadFile(id)
-                            .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                            .send({from : account,gas : 6000000})
             //console.log(receipt.events.downloadSuccess.returnValues)
         }catch(err){
             console.error(err)
@@ -50,10 +50,10 @@ class ContractService{
 
     }
 
-    async evaluateFileToContract(id,score,content){
+    async evaluateFileToContract(id,score,content,account){
         try{
             const receipt = await fileContract.methods.evaluate(id,score,content)
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : account,gas : 6000000})
             //console.log(receipt.events.evaluateSuccess.returnValues)
             let res = receipt.events.evaluateSuccess.returnValues
             res.content = content
@@ -64,7 +64,7 @@ class ContractService{
         
     }
 
-    async getCommentLengthFromContract(fileId){
+    async getCommentLengthFromContract(fileId,account){
         try{
             const receipt = await fileContract.methods.getCommentLength(fileId)
                                 .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
@@ -103,10 +103,10 @@ class ContractService{
         }
     }
 
-    async getDownloadFileFromContract(){
+    async getDownloadFileFromContract(account){
         try{
             const receipt = await fileContract.methods.getDownloadFile()
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : account , gas : 6000000})
             const res = receipt.events.getDownloadFileSuccess.returnValues
             return res? res : null
         }catch(err){
@@ -114,10 +114,11 @@ class ContractService{
         }
     }
 
-    async getUploadFileFromContract(){
+    async getUploadFileFromContract(account){
         try{
+            console.log(account)
             const receipt = await fileContract.methods.getPublishFile()
-                            .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                            .send({from : account,gas : 6000000})
             const res = receipt.events.getPublishFilesuccess.returnValues
             //console.log(res)
             return res ? res : null

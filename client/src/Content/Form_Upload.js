@@ -1,13 +1,16 @@
-import React, { useState } from "react"
+import React, { useState ,useEffect} from "react"
 import {
   Form, Input, Select, Space,
   DatePicker, Row, Col, 
   Button,message
 } from 'antd'
-import { InboxOutlined } from '@ant-design/icons'
 import { Upload } from '@douyinfe/semi-ui';
 import axios from "axios"
-import qs from "qs"
+
+import fileTransferContract from "../contracts/fileTransfer.json"
+import getWeb3 from '../getWeb3'
+
+
 
 const { Option } = Select
 const { TextArea } = Input
@@ -15,14 +18,44 @@ const { TextArea } = Input
 const selectValue = ["Computer", "Physics", "Chemistry", "Petroleum"]
 
 function Form_Upload () {
+  const [web3, setWeb3] = useState(undefined)
+  const [accounts, setAccounts] = useState([])
+  const [contract, setContract] = useState({})
   const [componentSize, setComponentSize] = useState('default')
   const [file,setFile] = useState(null)
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size)
   }
 
+  useEffect(() => {
+    async function getWbe3State () {
+      try {
+        // Get network provider and web3 instance.
+        const web3 = await getWeb3();
+        // Use web3 to get the user's accounts.
+        const accounts = await web3.eth.getAccounts();
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const depployedNetwork = fileTransferContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          fileTransferContract.abi,
+          depployedNetwork && depployedNetwork.address,
+        );
+        setWeb3(web3)
+        setAccounts(accounts)
+        setContract(instance)
+      } catch (error) {
+        alert('Failed to load web3, accounts, or contract. Check console for details.')
+        console.log(error)
+      }
+    }
+    getWbe3State()
+  }, [])
+
   const onFinish = (values) =>{
-    axios.post('http://localhost:8000/upload',{...values,resource:file.result})
+    axios.post('http://localhost:8000/upload',{
+      ...values,resource:file.result,account : accounts[0]
+    })
       .then((res)=>{
         console.log(res)
           if(res.status === 200){
@@ -34,15 +67,6 @@ function Form_Upload () {
       })
   }
 
-  //const uploadFile = () =>{
-    // {
-    //   fileName : values.fileName,
-    //   authorName : values.authorName,
-    //   selectStyle : values.selectStyle,
-    //   selectDate : values.selectDate,
-    //   resourceDescription : values.resourceDescription
-    // }
-  //}
   return (
     <Row align="middle">
       <Col span={12} offset={6}>

@@ -3,8 +3,10 @@ import {
   Avatar, Row, Col, Divider,
   Descriptions, Table, Button, message
 } from 'antd'
-import { UserOutlined, UserDeleteOutlined } from '@ant-design/icons'
 import axios from "axios"
+
+import fileTransferContract from "../contracts/fileTransfer.json"
+import getWeb3 from '../getWeb3'
 
 const personalData = {
   name: "Li Si",
@@ -44,11 +46,16 @@ const columns = [
   }
 ]
 function Personal () {
+  const [web3, setWeb3] = useState(undefined)
+  const [accounts, setAccounts] = useState([])
+  const [contract, setContract] = useState({})
   const [ uploadData , setUploadData ] = useState([])
   const [ downloadData , setDownloadData ] = useState([])
 
   const getUploadData = async () => {
-    axios.post('http://localhost:8000/uploadlist')
+    axios.post('http://localhost:8000/uploadlist',{
+      account : accounts[0]
+    })
       .then((res) => {
         console.log(res)
         if(res.status === 200){
@@ -74,7 +81,9 @@ function Personal () {
   }
 
   const getDownloadData = async () => {
-    axios.post('http://localhost:8000/downloadlist')
+    axios.post('http://localhost:8000/downloadlist',{
+      account : accounts[0]
+    })
       .then((res) => {
         console.log(res)
         if(res.status === 200){
@@ -99,10 +108,36 @@ function Personal () {
       })
   }
 
+
+  useEffect(async ()=>{
+      try {
+        // Get network provider and web3 instance.
+        const web3 = await getWeb3();
+        // Use web3 to get the user's accounts.
+        const accounts = await web3.eth.getAccounts();
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const depployedNetwork = fileTransferContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          fileTransferContract.abi,
+          depployedNetwork && depployedNetwork.address,
+        );
+        setWeb3(web3)
+        setAccounts(accounts)
+        setContract(instance)
+      } catch (error) {
+        alert('Failed to load web3, accounts, or contract. Check console for details.')
+        console.log(error)
+      }
+  },[])
+
   useEffect(()=>{
+    if(!Boolean(accounts.length)){
+      return
+    }
     getUploadData()
     getDownloadData()
-  },[])
+  },[accounts])
 
   return (
     <Row>

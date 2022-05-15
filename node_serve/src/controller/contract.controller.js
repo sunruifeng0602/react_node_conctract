@@ -15,10 +15,10 @@ class ContractController {
 
     async uploadFileContract(ctx,next) {
         try{
-            const {fileName,authorName,selectStyle,resourceDescription} = ctx.request.body
+            const {fileName,authorName,selectStyle,resourceDescription,account} = ctx.request.body
             const fileHash = ctx.body
             //console.log(fileHash)
-            const res = await uploadFileToContract(authorName,selectStyle,0,resourceDescription,fileHash)
+            const res = await uploadFileToContract(authorName,selectStyle,0,resourceDescription,fileHash,account)
             ctx.body = {
                 code : 0 ,
                 message : '文件上传成功',
@@ -32,7 +32,8 @@ class ContractController {
     async downloadFileContract(ctx,next){
         try{
             const id  = ctx.request.body.id
-            const res = await downloadFileToContract(id)
+            const account = ctx.request.body.account
+            const res = await downloadFileToContract(id,account)
         }catch(err){
             console.log(err)
         }
@@ -94,7 +95,9 @@ class ContractController {
             const id = ctx.request.body.id
             const score = ctx.request.body.score
             const content = ctx.request.body.content
-            const res = await evaluateFileToContract(parseInt(id),parseInt(score),content)
+            const account = ctx.request.body.account
+            console.log(account)
+            const res = await evaluateFileToContract(parseInt(id),parseInt(score),content,account)
             if(res){
                 ctx.body = {
                     code : 0,
@@ -137,7 +140,9 @@ class ContractController {
 
     async getDownloadFileList(ctx,next){
         try{
-            const downloadFileList = await getDownloadFileFromContract()
+            //console.log(ctx.request.body)
+            const { account } = ctx.request.body
+            const downloadFileList = await getDownloadFileFromContract(account)
             const downloadFileInfor = []
             //console.log(downloadFileList.downloadFilesID)
             for(let i  = 0 ; i < downloadFileList.downloadFilesID.length ; i++){
@@ -158,7 +163,8 @@ class ContractController {
 
     async getUploadFileList(ctx,next){
         try{
-            const uploadFileList = await getUploadFileFromContract()
+            const { account } = ctx.request.body
+            const uploadFileList = await getUploadFileFromContract(account)
             //console.log(uploadFileList.uploadFilesId)
             const uploadFileInfor = []
             for(let i = 0 ; i < uploadFileList.uploadFilesId.length ; i++){
