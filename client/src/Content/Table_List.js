@@ -1,5 +1,5 @@
 import React, { useState, useRef ,useEffect} from "react"
-import { Table, Input, Button, Space, Row, Col } from 'antd'
+import { Table, Input, Button, Space, Row, Col, message } from 'antd'
 import Highlighter from 'react-highlight-words'
 import { SearchOutlined } from '@ant-design/icons'
 import { useNavigate, Outlet } from "react-router-dom"
@@ -46,6 +46,7 @@ function Table_List () {
         })
   }
 
+
   useEffect(() =>{
     async function getWbe3State () {
       try {
@@ -71,6 +72,7 @@ function Table_List () {
     getWbe3State()
     getList()
   },[])
+
   
   console.log(accounts)
 
@@ -80,7 +82,8 @@ function Table_List () {
       path: recordlist.hash,
       id : recordlist.id,
       account : accounts[0]
-    },{responseType:'blob'}).then((res) =>{
+    },{responseType:'blob',withCredentials: true})
+    .then((res) =>{
       if(res.status === 200){
         const filetype = mime.getExtension(res.data.type)
         console.log(filetype) 
@@ -186,21 +189,21 @@ function Table_List () {
       ...getColumnSearchProps('id'),
     },
     {
-      title: 'File Hash',
+      title: '资源JASH',
       dataIndex: 'hash',
       key: 'hash',
       width: '30%',
       ...getColumnSearchProps('hash'),
     },
     {
-      title: 'Author',
+      title: '作者',
       dataIndex: 'author',
       key: 'author',
       width: '10%',
       ...getColumnSearchProps('author'),
     },
     {
-      title: 'Style',
+      title: '学科类型',
       dataIndex: 'style',
       key: 'style',
       ...getColumnSearchProps('style'),
@@ -208,19 +211,19 @@ function Table_List () {
       sortDirections: ['descend', 'ascend'],
     },
     {
-      title: 'Information' ,
+      title: '简介' ,
       dataIndex: 'infor',
       key: 'infor',
       ...getColumnSearchProps('infor'),
     },
     {
-      title: 'Action',
+      title: '操作',
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a onClick={downloadFile}>Download</a>
+          <a onClick={downloadFile}>下载</a>
           <a onClick={() => { navigate('/detials?id='+recordlist.id + '&&hash=' + recordlist.hash) }}>
-            Details
+            详情
           </a>
         </Space>
       ),

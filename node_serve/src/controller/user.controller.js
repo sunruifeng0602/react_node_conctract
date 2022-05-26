@@ -4,6 +4,9 @@ const {creatUser,getUserInfo,updateById} = require('../service/user.service')
 const {JWT_SECRET} = require ('../config/config.default')
 const {changPasswordError} = require('../constant/err.type')
 
+
+const maxAge = 1000*60*60*24
+
 class UserController{
     
     async register(ctx,next){
@@ -30,13 +33,19 @@ class UserController{
         console.log(username)
         try{
             const {password,...res} = await getUserInfo({username})
+            const token = jwt.sign(res , JWT_SECRET , {expiresIn : '1d'})
+            ctx.cookies.set('token',token,{
+                domain : 'localhost',
+                path : '/',
+                maxAge : maxAge,
+                httpOnly : false,
+                overwrite : false
+            })
             ctx.body ={
                 code : 0,
                 message : '用户登录成功',
                 result :{
-                    token : jwt.sign(res , JWT_SECRET , {
-                        expiresIn : '1d'
-                    }),
+                    token : token,
                     username : res.username,
                     id : res.id
                 }
@@ -67,6 +76,31 @@ class UserController{
             console.error(err)
         }
        
+    }
+
+    async setAccount(ctx,next){
+        const id = ctx.state.user.id
+        const username = ctx.state.user.username
+        const account = ctx.request.body.account
+        console.log(account)
+        try{
+            const res = await updateById({id,account})
+            if(res){
+                ctx.body = {
+                    code : 0 ,
+                    message : "绑定以太坊账户成功",
+                    result : {
+                        id : id,
+                        username : username ,
+                        account : account  
+                    }
+                }
+            }
+        }catch(err){
+            console.error(err)
+        }
+
+        await next()
     }
 
     //emailCaptcha

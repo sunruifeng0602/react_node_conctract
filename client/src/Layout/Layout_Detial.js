@@ -6,6 +6,7 @@ import React, { useRef, useState ,useEffect} from 'react'
 import moment from 'moment'
 import { useNavigate ,useSearchParams} from 'react-router-dom'
 import axios from 'axios'
+import mime from "mime"
 
 import fileTransferContract from "../contracts/fileTransfer.json"
 import getWeb3 from '../getWeb3'
@@ -74,7 +75,7 @@ function Layout_Detial () {
       score : score,
       content : value,
       account : accounts[0]
-    })
+    },{withCredentials: true})
     if(res.status === 200){
       message.success('评价成功')
       setRefresh(!refresh)
@@ -150,6 +151,36 @@ function Layout_Detial () {
     setValue(e.target.value)
   }
 
+  const downloadFile = async() => {
+    //console.log(recordlist)
+    axios.post("http://localhost:8000/download",{
+      path: fileHash,
+      id : fileId,
+      account : accounts[0]
+    },{responseType:'blob',withCredentials: true})
+    .then((res) =>{
+      if(res.status === 200){
+        const filetype = mime.getExtension(res.data.type)
+        console.log(filetype) 
+        const content  = res.data
+        const blob = new Blob([content])
+        if('download' in document.createElement('a')){
+          //非IE
+          const a = document.createElement('a')
+          a.download = 'download file.'+ filetype;
+          a.style.display = 'none';
+          a.href = window.URL.createObjectURL(blob);
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(a.href);
+          document.body.removeChild(a);
+        }
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
   return (
     <>
       <Layout className="layout">
@@ -161,38 +192,38 @@ function Layout_Detial () {
             style={{
               margin: '30px 0',
             }}>
-            <Breadcrumb.Item>Pagr:{filePage}</Breadcrumb.Item>
+            <Breadcrumb.Item>页码:{filePage}</Breadcrumb.Item>
             <Breadcrumb.Item>Id:{fileId}</Breadcrumb.Item>
             <Breadcrumb.Item>{fileHash}</Breadcrumb.Item>
             <Breadcrumb.Item>
-              <Button type='primary' onClick={() => { navigate("/") }}>BACK</Button>
+              <Button type='primary' onClick={() => { navigate("/list") }}>返回</Button>
             </Breadcrumb.Item>
-            <Button type='primary'>DownLoad</Button>
+            <Button type='primary' onClick={downloadFile}>下载</Button>
           </Breadcrumb>
 
           <Layout style={{ background: "#fff" }}>
             <Row style={{ margin: "20px" }}>
               <Col span={12} offset={4}>
-                <Divider orientation="left">Resource Information</Divider>
+                <Divider orientation="left">资源信息</Divider>
               </Col>
               <Col span={12} offset={6}>
                 <Descriptions bordered >
                   {/* <Descriptions.Item label="Image"></Descriptions.Item> */}
-                  <Descriptions.Item label="File ID" span={1}>{fileInfo.id}</Descriptions.Item>
-                  <Descriptions.Item label="Author Name" span={2}>{fileInfo.nameWriter}</Descriptions.Item>
-                  <Descriptions.Item label="Download Number" span={1}>{fileInfo.downloadNum}</Descriptions.Item>
-                  <Descriptions.Item label="Comment Number" span={2}>{fileInfo.comment}</Descriptions.Item>
-                  <Descriptions.Item label=" File Hash" span={3}>
+                  <Descriptions.Item label="资源ID" span={1}>{fileInfo.id}</Descriptions.Item>
+                  <Descriptions.Item label="作者" span={2}>{fileInfo.nameWriter}</Descriptions.Item>
+                  <Descriptions.Item label="下载次数" span={1}>{fileInfo.downloadNum}</Descriptions.Item>
+                  <Descriptions.Item label="评论次数" span={2}>{fileInfo.comment}</Descriptions.Item>
+                  <Descriptions.Item label="资源HASH" span={3}>
                     <Badge>
                       {fileInfo.hash}
                     </Badge>
                   </Descriptions.Item>
-                  <Descriptions.Item label=" File Information" span={3}>
+                  <Descriptions.Item label="资源描述信息" span={3}>
                     <Badge>
                       {fileInfo.infro}
                     </Badge>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Rate">
+                  <Descriptions.Item label="评分">
                     <Badge>
                       <Rate  defaultValue={3} />
                     </Badge>
@@ -212,7 +243,7 @@ function Layout_Detial () {
                       </Form.Item>
                       <Form.Item>
                         <Button htmlType="submit" loading={submitting} onClick={handleSubmit} type="primary">
-                          Add Comment
+                          发表评论
                         </Button>
                       </Form.Item></>
                   }
@@ -222,7 +253,7 @@ function Layout_Detial () {
             </Row>
           </Layout>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Detials and Comments</Footer>
+        <Footer style={{ textAlign: 'center' }}>资源详情与评论区</Footer>
       </Layout>
     </>
   )

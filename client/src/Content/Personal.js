@@ -25,22 +25,22 @@ const columns = [
     key: 'id'
   },
   {
-    title: 'File Hash',
+    title: '文件HASH',
     dataIndex: 'hash',
     key: 'hash'
   },
   {
-    title: 'Author',
+    title: '作者',
     dataIndex: 'author',
     key: 'author'
   },
   {
-    title: 'Style',
+    title: '学科类型',
     dataIndex: 'style',
     key: 'style'
   },
   {
-    title: 'Information' ,
+    title: '描述信息' ,
     dataIndex: 'infor',
     key: 'infor'
   }
@@ -51,11 +51,12 @@ function Personal () {
   const [contract, setContract] = useState({})
   const [ uploadData , setUploadData ] = useState([])
   const [ downloadData , setDownloadData ] = useState([])
+  const [astate, setAstate] = useState(false)
 
   const getUploadData = async () => {
     axios.post('http://localhost:8000/uploadlist',{
       account : accounts[0]
-    })
+    },{withCredentials: true})
       .then((res) => {
         console.log(res)
         if(res.status === 200){
@@ -83,7 +84,7 @@ function Personal () {
   const getDownloadData = async () => {
     axios.post('http://localhost:8000/downloadlist',{
       account : accounts[0]
-    })
+    },{withCredentials: true})
       .then((res) => {
         console.log(res)
         if(res.status === 200){
@@ -108,6 +109,16 @@ function Personal () {
       })
   }
 
+  const setAccount = () =>{
+    axios.post('http://localhost:8000/setaccount',{
+      account : accounts[0]
+    },{withCredentials: true}).then((res)=>{
+      if(res.status === 200 ){
+        message.info('绑定以太坊账户成功')
+        setAstate(!astate)
+      }
+    })
+  }
 
   useEffect(async ()=>{
       try {
@@ -137,7 +148,7 @@ function Personal () {
     }
     getUploadData()
     getDownloadData()
-  },[accounts])
+  },[astate])
 
   return (
     <Row>
@@ -146,19 +157,12 @@ function Personal () {
           <Avatar shape="square" size={64} icon={<UserDeleteOutlined />} />
           {/* <span>{personalData.name}</span> */}
         {/* </Row> */}
-        <Divider>Personal Information</Divider>
-        <Descriptions titile="Personal" extra={<Button type="primary">Edit</Button>}>
-          <Descriptions.Item label="name">{personalData.name}</Descriptions.Item>
-          <Descriptions.Item label="adress">{personalData.adress}</Descriptions.Item>
-          <Descriptions.Item label="sex">{personalData.sex}</Descriptions.Item>
-          <Descriptions.Item label="birthday">{personalData.birthday}</Descriptions.Item>
-          <Descriptions.Item label="position">{personalData.position}</Descriptions.Item>
-          <Descriptions.Item label="education">{personalData.education}</Descriptions.Item>
-          <Descriptions.Item label="university">{personalData.university}</Descriptions.Item>
+        <Divider></Divider>
+        <Descriptions titile="Personal" extra={<Button type="primary" onClick={setAccount}>绑定账户</Button>}>
         </Descriptions>
-        <Divider>Upload Record</Divider>
+        <Divider>资源上传记录</Divider>
         <Table columns={columns} dataSource={uploadData} size="middle" />
-        <Divider>Download Record</Divider>
+        <Divider>资源下载记录</Divider>
         <Table columns={columns} dataSource={downloadData} size="middle" />
       </Col>
     </Row>

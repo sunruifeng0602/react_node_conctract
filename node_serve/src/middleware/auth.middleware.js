@@ -4,9 +4,9 @@ const {JWT_SECRET} = require('../config/config.default')
 const {tokenExpiredError,jsonWebTokenError} = require('../constant/err.type')
 
 const auth = async ( ctx , next ) => {
-    
-    const {authorization } = ctx.request.header
-    const token = authorization.replace('Bearer ','')
+
+    const token = ctx.cookies.get('token')
+    console.log(token)
     //console.log(token)
 
     try{

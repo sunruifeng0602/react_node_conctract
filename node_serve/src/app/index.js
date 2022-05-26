@@ -12,7 +12,16 @@ const errHandler = require('./errHandler')
 
 const app = new Koa()
 
-app.use(cors())
+app.use(cors({
+    origin(evt){
+        return evt.header.origin
+    },
+    expose : ['Content-Type', 'WWW-Authenticate', 'Server-Authorization'],
+    credentials : true,
+    methods:['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    headers:'Origin, X-Requested-With, Content-Type, Accept',
+    maxAge : 5
+}))
 app.use(KoaBody({
     multipart: true,
     formidable :{

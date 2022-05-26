@@ -55,7 +55,7 @@ function Form_Upload () {
   const onFinish = (values) =>{
     axios.post('http://localhost:8000/upload',{
       ...values,resource:file.result,account : accounts[0]
-    })
+    },{withCredentials: true})
       .then((res)=>{
         console.log(res)
           if(res.status === 200){
@@ -79,14 +79,14 @@ function Form_Upload () {
           size={componentSize}
           onFinish={onFinish}
         >
-          <Form.Item name="fileName" label="File Name">
-            <Input size="middle" placeholder="Please enter a file name" />
+          <Form.Item name="fileName" label="资源名">
+            <Input size="middle" placeholder="请输入资源名称" />
           </Form.Item>
-          <Form.Item name="authorName" label="Author Name">
-            <Input size="middle" placeholder="Please enter a author name" />
+          <Form.Item name="authorName" label="作者">
+            <Input size="middle" placeholder="请输入作者名称" />
           </Form.Item>
-          <Form.Item name="selectStyle" label="Select Style">
-            <Select defaultValue="Please select a resource discipline">
+          <Form.Item name="selectStyle" label="学科类型">
+            <Select defaultValue="选择资源对应的学科类型">
               {selectValue.map(item => {
                 return (
                   <Option key={item}>{item}</Option>
@@ -94,12 +94,12 @@ function Form_Upload () {
               })}
             </Select>
           </Form.Item>
-          <Form.Item name="selectDate" label="Select Date">
+          <Form.Item name="selectDate" label="选择日期">
             <Space direction="vertical">
               <DatePicker></DatePicker>
             </Space>
           </Form.Item>
-          <Form.Item name="resourceDescription" label="Description">
+          <Form.Item name="resourceDescription" label="资源描述">
             <TextArea showCount style={{ height: 120 }} maxLength={100} />
           </Form.Item>
           <Form.Item name="resourceSelect" label="Select">
@@ -119,7 +119,7 @@ function Form_Upload () {
           </Form.Item>
           <Form.Item name="resourceUpload"  >
             <Button type="primary" htmlType="submit" >
-              Upload
+              上传资源
             </Button>
           </Form.Item>
         </Form>

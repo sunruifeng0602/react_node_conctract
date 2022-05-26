@@ -15,7 +15,8 @@ class ContractController {
 
     async uploadFileContract(ctx,next) {
         try{
-            const {fileName,authorName,selectStyle,resourceDescription,account} = ctx.request.body
+            const account = ctx.account
+            const {fileName,authorName,selectStyle,resourceDescription} = ctx.request.body
             const fileHash = ctx.body
             //console.log(fileHash)
             const res = await uploadFileToContract(authorName,selectStyle,0,resourceDescription,fileHash,account)
@@ -32,7 +33,7 @@ class ContractController {
     async downloadFileContract(ctx,next){
         try{
             const id  = ctx.request.body.id
-            const account = ctx.request.body.account
+            const account = ctx.account
             const res = await downloadFileToContract(id,account)
         }catch(err){
             console.log(err)
@@ -95,7 +96,8 @@ class ContractController {
             const id = ctx.request.body.id
             const score = ctx.request.body.score
             const content = ctx.request.body.content
-            const account = ctx.request.body.account
+            //const account = ctx.request.body.account
+            const account = ctx.account
             console.log(account)
             const res = await evaluateFileToContract(parseInt(id),parseInt(score),content,account)
             if(res){
@@ -140,8 +142,7 @@ class ContractController {
 
     async getDownloadFileList(ctx,next){
         try{
-            //console.log(ctx.request.body)
-            const { account } = ctx.request.body
+            const account = ctx.account
             const downloadFileList = await getDownloadFileFromContract(account)
             const downloadFileInfor = []
             //console.log(downloadFileList.downloadFilesID)
@@ -163,7 +164,7 @@ class ContractController {
 
     async getUploadFileList(ctx,next){
         try{
-            const { account } = ctx.request.body
+            const account = ctx.account
             const uploadFileList = await getUploadFileFromContract(account)
             //console.log(uploadFileList.uploadFilesId)
             const uploadFileInfor = []

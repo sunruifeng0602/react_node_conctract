@@ -17,13 +17,13 @@ function Menu_L () {
   return (
     <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
       <Menu.Item key="1" icon={<VideoCameraOutlined />} onClick={() => { navigate('/list') }}>
-        Resource List
+        资源列表
       </Menu.Item>
       <Menu.Item key="2" icon={< UploadOutlined />} onClick={() => { navigate('/upload') }}>
-        Upload Resource
+        上传资源
       </Menu.Item>
       <Menu.Item key="3" icon={<UserOutlined />} onClick={() => { navigate('/personal') }}>
-        Personal
+        用户记录
       </Menu.Item>
     </Menu>
   )

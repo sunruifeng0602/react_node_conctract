@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from "react"
 import {
   Layout, Breadcrumb, Row, Col,
-  Form, Input, Button, Checkbox, Divider
+  Form, Input, Button, Checkbox, Divider, message
 } from 'antd'
 import axios from "axios"
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
@@ -14,6 +14,7 @@ function Login () {
   const [user, setUser] = useState('')
   const [password, setPassword] = useState('')
   const [login, setLogin] = useState(false)
+  const [token, setToken] = useState('')
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values)
@@ -25,9 +26,11 @@ function Login () {
     axios.post('http://localhost:8000/login',{
         username : user,
         password : password,
-    }).then((res) => {
+    },{withCredentials: true}).then((res) => {
       console.log(res)
       if(res.data.code === 0){
+        message.info('登录成功')
+        setToken(res.data.result.token)
         setLogin(true)
       }
     }).catch((err) => {
@@ -37,7 +40,7 @@ function Login () {
 
   useEffect(() => {
     if(login){
-      navigate('/list')
+      navigate('/personal')
     }
   },[login])
 
@@ -74,7 +77,7 @@ function Login () {
                     },
                   ]}
                 >
-                  <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+                  <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="邮箱" />
                 </Form.Item>
                 <Form.Item
                   name="password"
@@ -88,12 +91,12 @@ function Login () {
                   <Input
                     prefix={<LockOutlined className="site-form-item-icon" />}
                     type="password"
-                    placeholder="Password"
+                    placeholder="密码"
                   />
                 </Form.Item>
                 <Form.Item>
                   <Form.Item name="remember" valuePropName="checked" noStyle>
-                    <Checkbox>Remember me</Checkbox>
+                    <Checkbox>记住密码</Checkbox>
                   </Form.Item>
                   {/* <a className="login-form-forgot" href="">
                     Forgot password
@@ -103,9 +106,9 @@ function Login () {
                 <Form.Item>
                   <Button type="primary" htmlType="submit" className="login-form-button"
                     onClick={onLogin}>
-                    Log in
+                    登录
                   </Button>
-                  <a onClick={() => { navigate('/register') }}>Or register now!</a>
+                  <a onClick={() => { navigate('/register') }}>Or 立即注册!</a>
                 </Form.Item>
               </Form>
             </div>

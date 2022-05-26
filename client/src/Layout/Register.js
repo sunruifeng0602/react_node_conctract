@@ -109,7 +109,7 @@ function Register () {
       <Row align="middle">
         <Col span={12} offset={6}>
           <Content style={{ padding: '0 50px', margin: '120px 0' }}>
-            <Divider orientation="left">Register</Divider>
+            <Divider orientation="left">注册</Divider>
             {/* <Breadcrumb style={{ margin: '16px 0' }}>
                 <Breadcrumb.Item>Login</Breadcrumb.Item>
               </Breadcrumb> */}
@@ -128,7 +128,7 @@ function Register () {
               >
                 <Form.Item
                   name="email"
-                  label="E-mail"
+                  label="邮箱"
                   rules={[
                     {
                       type: 'email',
@@ -145,7 +145,7 @@ function Register () {
 
                 <Form.Item
                   name="password"
-                  label="Password"
+                  label="密码"
                   rules={[
                     {
                       required: true,
@@ -159,7 +159,7 @@ function Register () {
 
                 <Form.Item
                   name="confirm"
-                  label="Confirm Password"
+                  label="确认密码"
                   dependencies={['password']}
                   hasFeedback
                   rules={[
@@ -183,7 +183,7 @@ function Register () {
 
                 <Form.Item
                   name="nickname"
-                  label="Nickname"
+                  label="昵称"
                   tooltip="What do you want others to call you?"
                   rules={[
                     {
@@ -196,7 +196,7 @@ function Register () {
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Captcha" extra="We must make sure that your are a human.">
+                <Form.Item label="验证码" extra="We must make sure that your are a human.">
                   <Row gutter={8}>
                     <Col span={12}>
                       <Form.Item
@@ -213,7 +213,7 @@ function Register () {
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Button onClick={onCaptcha}>Get captcha</Button>
+                      <Button onClick={onCaptcha}>获取验证码</Button>
                     </Col>
                   </Row>
                 </Form.Item>
@@ -237,7 +237,7 @@ function Register () {
                   {...tailFormItemLayout}
                 >
                   <Button type="primary" htmlType="submit" onClick={onRegister}>
-                    Register
+                    注册
                   </Button>
                 </Form.Item>
               </Form>

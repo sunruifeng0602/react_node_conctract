@@ -32,7 +32,7 @@ class UserService{
         
 
         const res = await User.findOne({
-            attributes : ['id', 'username', 'password'],
+            attributes : ['id', 'username', 'password','account'],
             where : whereOpt
         })
         //console.log(res)
@@ -45,13 +45,14 @@ class UserService{
         // }
     }
 
-    async updateById({id ,username, password,is_admin}){
+    async updateById({id ,username, password,is_admin,account}){
         const whereOpt = {id}
         const newUser = {}
 
         username && Object.assign(newUser, { username })
         password && Object.assign(newUser, { password })
         is_admin && Object.assign(newUser, { is_admin })
+        account && Object.assign(newUser, {account})
 
         //console.log(newUser)
         const res = await User.update(newUser,{

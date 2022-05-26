@@ -11,23 +11,26 @@ const {
     getUploadFileList,
 } = require('../controller/contract.controller')
 
+const {auth} = require('../middleware/auth.middleware')
+const {getAccount} = require('../middleware/account.middleware')
+
 const router  = new Router()
 
-router.post('/upload',uploadFile,uploadFileContract)
+router.post('/upload',auth,getAccount,uploadFile,uploadFileContract)
 
-router.post('/download',downloadFile,downloadFileContract)
+router.post('/download',auth,getAccount,downloadFile,downloadFileContract)
 
 router.post('/detial',getFileDetial)
 
 router.post('/filelist',getFilesList)
 
-router.post('/evaluate',evaluateFile)
+router.post('/evaluate',auth,getAccount,evaluateFile)
 
 router.post('/getcomment',getComment)
 
-router.post('/downloadlist',getDownloadFileList)
+router.post('/downloadlist',auth,getAccount,getDownloadFileList)
 
-router.post('/uploadlist',getUploadFileList)
+router.post('/uploadlist',auth,getAccount,getUploadFileList)
 
 router.post('/uploadRequest',getUploadRequest)
 
