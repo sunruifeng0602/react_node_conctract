@@ -58,7 +58,8 @@ const uploadFile = async (ctx,next) =>{
         const cid = file.path
         const length = ctx.request.body.resource.originalFilename.split('.').length
         const type = ctx.request.body.resource.originalFilename.split('.')[length-1]
-        await fileType.create({cid,type})
+        const filename = ctx.request.body.fileName
+        await fileType.create({cid,type,filename})
         ctx.body = file.path
     }catch(err){
         console.error(err)

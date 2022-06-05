@@ -10,6 +10,10 @@ const FileType = seq.define('FileType',{
     type : {
         type : DataTypes.STRING,
         comment : '文件后缀名'
+    },
+    filename :{
+        type : DataTypes.STRING,
+        comment : '文件名'
     }
 })
 

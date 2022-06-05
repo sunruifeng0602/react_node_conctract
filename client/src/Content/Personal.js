@@ -25,6 +25,11 @@ const columns = [
     key: 'id'
   },
   {
+    title: '资源名称',
+    dataIndex: 'name',
+    key: 'name'
+  },
+  {
     title: '文件HASH',
     dataIndex: 'hash',
     key: 'hash'
@@ -69,7 +74,8 @@ function Personal () {
               hash : res.data.result[i].cover,
               author : res.data.result[i].nameWriter,
               style : res.data.result[i].style,
-              infor: res.data.result[i].intro
+              infor: res.data.result[i].intro,
+              name :  res.data.result[i].fileName
             }
             list.push(listObj)
           }
@@ -97,7 +103,8 @@ function Personal () {
               hash : res.data.result[i].cover,
               author : res.data.result[i].nameWriter,
               style : res.data.result[i].style,
-              nfor: res.data.result[i].intro
+              nfor: res.data.result[i].intro,
+              name :  res.data.result[i].fileName
             }
             list.push(listObj)
           }
@@ -140,6 +147,8 @@ function Personal () {
         alert('Failed to load web3, accounts, or contract. Check console for details.')
         console.log(error)
       }
+    getUploadData()
+    getDownloadData()
   },[])
 
   useEffect(()=>{

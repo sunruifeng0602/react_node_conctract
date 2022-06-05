@@ -38,6 +38,7 @@ function Layout_Detial () {
 
   const fileId = params.get('id')
   const fileHash = params.get('hash')
+  const fileName = params.get('name')
   const filePage = (fileId/10)+1
 
 
@@ -194,7 +195,7 @@ function Layout_Detial () {
             }}>
             <Breadcrumb.Item>页码:{filePage}</Breadcrumb.Item>
             <Breadcrumb.Item>Id:{fileId}</Breadcrumb.Item>
-            <Breadcrumb.Item>{fileHash}</Breadcrumb.Item>
+            <Breadcrumb.Item>{fileName}</Breadcrumb.Item>
             <Breadcrumb.Item>
               <Button type='primary' onClick={() => { navigate("/list") }}>返回</Button>
             </Breadcrumb.Item>

@@ -34,7 +34,8 @@ function Table_List () {
                 hash : res.data.result.list[i].cover,
                 author : res.data.result.list[i].nameWriter,
                 style : res.data.result.list[i].style,
-                infor: res.data.result.list[i].intro
+                infor: res.data.result.list[i].intro,
+                name: res.data.result.list[i].fileName
               }
               list.push(listObj)
             }
@@ -189,7 +190,13 @@ function Table_List () {
       ...getColumnSearchProps('id'),
     },
     {
-      title: '资源JASH',
+      title: '资源名称',
+      dataIndex: 'name',
+      key: 'name',
+      ...getColumnSearchProps('name'),
+    },
+    {
+      title: '资源HASH',
       dataIndex: 'hash',
       key: 'hash',
       width: '30%',
@@ -222,7 +229,7 @@ function Table_List () {
       render: (text, record) => (
         <Space size="middle">
           <a onClick={downloadFile}>下载</a>
-          <a onClick={() => { navigate('/detials?id='+recordlist.id + '&&hash=' + recordlist.hash) }}>
+          <a onClick={() => { navigate('/detials?id='+recordlist.id + '&&hash=' + recordlist.hash + '&&name=' + recordlist.name) }}>
             详情
           </a>
         </Space>

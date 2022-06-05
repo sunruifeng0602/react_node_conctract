@@ -1,5 +1,6 @@
 const fileContract = require('../contracts/file.contract')
 //console.log(fileContract.methods)
+const {ACCOUNT} = require('../config/config.default')
 
 
 class ContractService{
@@ -26,7 +27,7 @@ class ContractService{
     async getFileInfoFromContract(id){
         try{
             const receipt = await fileContract.methods.getFilesInfo(id)
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : ACCOUNT,gas : 6000000})
             //console.log(receipt.events.getFilesInfoSuccess.returnValues)
             let res = receipt.events.getFilesInfoSuccess.returnValues
             res.id = id
@@ -40,7 +41,7 @@ class ContractService{
     async getFileLengthFromContract(){
         try{
             const receipt = await fileContract.methods.getFileLength()
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : ACCOUNT,gas : 6000000})
             //console.log(receipt.events.getFileLengthSuccess.returnValues)
             const res = receipt.events.getFileLengthSuccess.returnValues
             return res ? res : null
@@ -67,7 +68,7 @@ class ContractService{
     async getCommentLengthFromContract(fileId,account){
         try{
             const receipt = await fileContract.methods.getCommentLength(fileId)
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : ACCOUNT,gas : 6000000})
             //console.log(receipt.events.getCommentLengthSuccess.returnValues)
             let res = receipt.events.getCommentLengthSuccess.returnValues
             res.fileId = fileId
@@ -81,7 +82,7 @@ class ContractService{
     async getComentFromContract(fileId,contentId){
         try{
             const receipt = await fileContract.methods.getCommentInfo(fileId,contentId)
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : ACCOUNT,gas : 6000000})
             //console.log(receipt.events.getCommentInfoSuccess.returnValues) 
             let res = receipt.events.getCommentInfoSuccess.returnValues
             res.contentId = contentId
@@ -95,7 +96,7 @@ class ContractService{
     async getDownloadNumsFromContract(fileId){
         try{
             const receipt = await fileContract.methods.getDownloadNums(fileId)
-                                .send({from : '0x49fF96Ae1f0906A0946452aBC98E8aB3A5e6EFb8',gas : 6000000})
+                                .send({from : ACCOUNT,gas : 6000000})
             const res = receipt.events.getDownloadNumsSuccess.returnValues
             return res ? res : null
         }catch(err){

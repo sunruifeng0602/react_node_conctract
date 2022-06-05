@@ -11,14 +11,18 @@ const {
     getUploadFileFromContract
 } = require('../service/contract.service')
 
+const fileType = require('../model/filetype.model')
+
 class ContractController {
 
     async uploadFileContract(ctx,next) {
         try{
             const account = ctx.account
+            //console.log(ctx.request.body)
+            //console.log(account)
             const {fileName,authorName,selectStyle,resourceDescription} = ctx.request.body
+            //console.log(fileName)
             const fileHash = ctx.body
-            //console.log(fileHash)
             const res = await uploadFileToContract(authorName,selectStyle,0,resourceDescription,fileHash,account)
             ctx.body = {
                 code : 0 ,
@@ -74,6 +78,15 @@ class ContractController {
             const filesList = []
             for(let i = 0 ; i < parseInt(res.filesLength) ; i ++){
                 const fileres = await getFileInfoFromContract(i)
+                //console.log(fileres.cover)
+                const cid = fileres.cover
+                const whereOpt = {}
+                cid && Object.assign(whereOpt, {cid})
+                const res = await fileType.findOne({
+                    attributes : [ 'cid', 'filename'],
+                    where : whereOpt
+                })
+                fileres.fileName = res.dataValues.filename
                 filesList.push(fileres)
             }
             if(filesList[0]){
@@ -148,7 +161,16 @@ class ContractController {
             //console.log(downloadFileList.downloadFilesID)
             for(let i  = 0 ; i < downloadFileList.downloadFilesID.length ; i++){
                 //console.log(downloadFileList.downloadFilesID[i])
-                downloadFileInfor.push(await getFileInfoFromContract(downloadFileList.downloadFilesID[i]))
+                const fileres = await getFileInfoFromContract(downloadFileList.downloadFilesID[i])
+                const cid = fileres.cover
+                const whereOpt = {}
+                cid && Object.assign(whereOpt, {cid})
+                const res = await fileType.findOne({
+                    attributes : [ 'cid', 'filename'],
+                    where : whereOpt
+                })
+                fileres.fileName = res.dataValues.filename
+                downloadFileInfor.push(fileres)
             }
             if(downloadFileInfor){
                 ctx.body = {
@@ -169,7 +191,16 @@ class ContractController {
             //console.log(uploadFileList.uploadFilesId)
             const uploadFileInfor = []
             for(let i = 0 ; i < uploadFileList.uploadFilesId.length ; i++){
-                uploadFileInfor.push(await getFileInfoFromContract(uploadFileList.uploadFilesId[i]))
+                const fileres = await getFileInfoFromContract(uploadFileList.uploadFilesId[i])
+                const cid = fileres.cover
+                const whereOpt = {}
+                cid && Object.assign(whereOpt, {cid})
+                const res = await fileType.findOne({
+                    attributes : [ 'cid', 'filename'],
+                    where : whereOpt
+                })
+                fileres.fileName = res.dataValues.filename
+                uploadFileInfor.push(fileres)
             }
             if(uploadFileInfor){
                 ctx.body = {

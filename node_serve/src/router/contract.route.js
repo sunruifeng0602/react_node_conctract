@@ -22,15 +22,15 @@ router.post('/download',auth,getAccount,downloadFile,downloadFileContract)
 
 router.post('/detial',getFileDetial)
 
-router.post('/filelist',getFilesList)
+router.post('/filelist',getFilesList)//
 
 router.post('/evaluate',auth,getAccount,evaluateFile)
 
 router.post('/getcomment',getComment)
 
-router.post('/downloadlist',auth,getAccount,getDownloadFileList)
+router.post('/downloadlist',auth,getAccount,getDownloadFileList)//
 
-router.post('/uploadlist',auth,getAccount,getUploadFileList)
+router.post('/uploadlist',auth,getAccount,getUploadFileList)//
 
 router.post('/uploadRequest',getUploadRequest)
 
