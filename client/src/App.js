@@ -9,8 +9,8 @@ import Layout_List from "./Layout/Layout_List"
 import Layout_From from './Layout/Layout_From'
 import Layout_Personal from './Layout/Layout_Personal'
 import Layout_Detial from "./Layout/Layout_Detial"
-import Login from "./Layout/Login"
-import Register from "./Layout/Register"
+import Login from "./login/login"
+import Register from "./login/register"
 
 function App () {
 
