@@ -8,21 +8,24 @@ import NotFound from "./NotFound"
 
 import Login from "./login/login"
 import Register from "./login/register"
-import layoutList from "./layoutSemi/layoutList"
+import LayoutList from "./layoutSemi/layoutList"
+import LayoutUpload from "./layoutSemi/layoutUpload"
+import LayoutDetial from "./layoutSemi/layoutDetial"
 
 function App () {
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<layoutList></layoutList>}></Route>
+        <Route index element={<LayoutDetial />}></Route>
         <Route path="/" element={<Login />}></Route>
-        {/* <Route path="/list" element={<Layout_List />}></Route>
-        <Route path="/detials" element={<Layout_Detial />}></Route>
-        <Route path="/upload" element={<Layout_From />}></Route>
-        <Route path="/personal" element={<Layout_Personal />}></Route> */}
+        <Route path="/list" element={<LayoutList />}></Route>
+        <Route path="/detials" element={<LayoutDetial />}></Route>
+        <Route path="/upload" element={<LayoutUpload />}></Route>
+        {/* <Route path="/personal" element={<Layout_Personal />}></Route> */}
         <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
+        <Route path="/test" element= {<layoutList />}></Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
